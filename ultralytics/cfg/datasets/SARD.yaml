@@ -1,0 +1,46 @@
+#yaml:yolov13-main/ultralytics/cfg/datasets/person-search.yaml
+# Person Search dataset configuration
+
+# Dataset info
+#path: /home/pcl/sdb1/data/DataSet/PersonSearch/YOLO_style/CUHK-SYSU  #../datasets/person_search dataset root dir
+#train: train/images  # train images (relative to 'path')
+#val: val/images  # val images (relative to 'path')
+#test: test/images  # test images (optional)
+#/home/pcl/yolo/YOLO_PS/yolov13-xiugai/ultralytics/utils/loss.py（24行）中SARD数据集时confidence_threshold=1，okutama-action数据集时confidence_threshold=0.5
+path: /media/hello/data2/songhq/YOLOout/YOLO_PS/yolov13-xiugai/SARD # dataset root dir to CrowdHuman dataset
+train: images/train # train images (relative to 'path')
+val: images/val # val images (relative to 'path')
+test: images/test # test images (optional)
+
+# Classes
+names:
+ 0: person
+# names:
+#   0: standing
+#   1: sitting
+#   2: lying_down
+#   3: walking
+#   4: running
+#   5: not_defined
+  
+person_states:
+  0: standing
+  1: sitting
+  2: lying_down
+  3: walking
+  4: running
+  5: not_defined
+
+state_format: 6_columns  # [class, x, y, w, h, 姿势类别(state)]
+
+# Download script/URL (optional)
+download: |
+  # Download and setup instructions
+  # For CUHK-SYSU:
+  # 1. Download dataset from official website
+  # 2. Run conversion script:
+  # python -c "
+  # from ultralytics.data.person_search import convert_cuhk_sysu_to_yolo
+  # convert_cuhk_sysu_to_yolo('/path/to/cuhk-sysu', '/path/to/output')
+  # "
+

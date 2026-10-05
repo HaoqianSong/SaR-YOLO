@@ -1,0 +1,174 @@
+# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
+
+# Global configuration YAML with settings and hyperparameters for YOLO training, validation, prediction and export
+# For documentation see https://docs.ultralytics.com/usage/cfg/
+
+task: detect # (str) YOLO task, i.e. detect, segment, classify, pose, obb
+mode: train # (str) YOLO mode, i.e. train, val, predict, export, track, benchmark
+
+# Train settings -------------------------------------------------------------------------------------------------------
+model: # (str, optional) path to model file, i.e. yolov8n.pt, yolov8n.yaml
+data: # (str, optional) path to data file, i.e. coco8.yaml
+epochs: 100 # (int) number of epochs to train for
+time: # (float, optional) number of hours to train for, overrides epochs if supplied
+patience: 100 # (int) epochs to wait for no observable improvement for early stopping of training
+batch: 16 # (int) number of images per batch (-1 for AutoBatch)
+imgsz: 640 # (int | list) input images size as int for train and val modes, or list[h,w] for predict and export modes
+save: True # (bool) save train checkpoints and predict results
+save_period: -1 # (int) Save checkpoint every x epochs (disabled if < 1)
+cache: False # (bool) True/ram, disk or False. Use cache for data loading
+device: # (int | str | list, optional) device to run on, i.e. cuda device=0 or device=0,1,2,3 or device=cpu
+workers: 8 # (int) number of worker threads for data loading (per RANK if DDP)
+project: # (str, optional) project name
+name: # (str, optional) experiment name, results saved to 'project/name' directory
+exist_ok: False # (bool) whether to overwrite existing experiment
+pretrained: True # (bool | str) whether to use a pretrained model (bool) or a model to load weights from (str)
+optimizer: auto # (str) optimizer to use, choices=[SGD, Adam, Adamax, AdamW, NAdam, RAdam, RMSProp, auto]
+verbose: True # (bool) whether to print verbose output
+seed: 0 # (int) random seed for reproducibility
+deterministic: True # (bool) whether to enable deterministic mode
+single_cls: False # (bool) train multi-class data as single-class
+rect: False # (bool) rectangular training if mode='train' or rectangular validation if mode='val'
+cos_lr: False # (bool) use cosine learning rate scheduler
+close_mosaic: 10 # (int) disable mosaic augmentation for final epochs (0 to disable)
+resume: False # (bool) resume training from last checkpoint
+amp: True # (bool) Automatic Mixed Precision (AMP) training, choices=[True, False], True runs AMP check
+fraction: 1.0 # (float) dataset fraction to train on (default is 1.0, all images in train set)
+profile: False # (bool) profile ONNX and TensorRT speeds during training for loggers
+freeze: None # (int | list, optional) freeze first n layers, or freeze list of layer indices during training
+multi_scale: False # (bool) Whether to use multiscale during training
+# Segmentation
+overlap_mask: True # (bool) merge object masks into a single image mask during training (segment train only)
+mask_ratio: 4 # (int) mask downsample ratio (segment train only)
+# Classification
+dropout: 0.0 # (float) use dropout regularization (classify train only)
+
+# Val/Test settings ----------------------------------------------------------------------------------------------------
+val: True # (bool) validate/test during training
+split: val # (str) dataset split to use for validation, i.e. 'val', 'test' or 'train'
+save_json: False # (bool) save results to JSON file
+save_hybrid: False # (bool) save hybrid version of labels (labels + additional predictions)
+conf: # (float, optional) object confidence threshold for detection (default 0.25 predict, 0.001 val)
+iou: 0.7 # (float) intersection over union (IoU) threshold for NMS
+max_det: 300 # (int) maximum number of detections per image
+half: False # (bool) use half precision (FP16)
+dnn: False # (bool) use OpenCV DNN for ONNX inference
+plots: True # (bool) save plots and images during train/val
+
+# Predict settings -----------------------------------------------------------------------------------------------------
+source: # (str, optional) source directory for images or videos
+vid_stride: 1 # (int) video frame-rate stride
+stream_buffer: False # (bool) buffer all streaming frames (True) or return the most recent frame (False)
+visualize: False # (bool) visualize model features
+augment: False # (bool) apply image augmentation to prediction sources
+agnostic_nms: False # (bool) class-agnostic NMS
+classes: # (int | list[int], optional) filter results by class, i.e. classes=0, or classes=[0,2,3]
+retina_masks: False # (bool) use high-resolution segmentation masks
+embed: # (list[int], optional) return feature vectors/embeddings from given layers
+
+# Visualize settings ---------------------------------------------------------------------------------------------------
+show: False # (bool) show predicted images and videos if environment allows
+save_frames: False # (bool) save predicted individual video frames
+save_txt: False # (bool) save results as .txt file
+save_conf: False # (bool) save results with confidence scores
+save_crop: False # (bool) save cropped images with results
+show_labels: True # (bool) show prediction labels, i.e. 'person'
+show_conf: True # (bool) show prediction confidence, i.e. '0.99'
+show_boxes: True # (bool) show prediction boxes
+line_width: # (int, optional) line width of the bounding boxes. Scaled to image size if None.
+
+# Export settings ------------------------------------------------------------------------------------------------------
+format: torchscript # (str) format to export to, choices at https://docs.ultralytics.com/modes/export/#export-formats
+keras: False # (bool) use Kera=s
+optimize: False # (bool) TorchScript: optimize for mobile
+int8: False # (bool) CoreML/TF INT8 quantization
+dynamic: False # (bool) ONNX/TF/TensorRT: dynamic axes
+simplify: True # (bool) ONNX: simplify model using `onnxslim`
+opset: # (int, optional) ONNX: opset version
+workspace: None # (float, optional) TensorRT: workspace size (GiB), `None` will let TensorRT auto-allocate memory
+nms: False # (bool) CoreML: add NMS
+
+# Hyperparameters ------------------------------------------------------------------------------------------------------
+lr0: 0.01 # (float) initial learning rate (i.e. SGD=1E-2, Adam=1E-3)
+lrf: 0.01 # (float) final learning rate (lr0 * lrf)
+momentum: 0.937 # (float) SGD momentum/Adam beta1
+weight_decay: 0.0005 # (float) optimizer weight decay 5e-4
+warmup_epochs: 3.0 # (float) warmup epochs (fractions ok)
+warmup_momentum: 0.8 # (float) warmup initial momentum
+warmup_bias_lr: 0.0 # 0.1 # (float) warmup initial bias lr
+box: 7.5 # (float) box loss gain
+cls: 0.5 # (float) cls loss gain (scale with pixels)
+dfl: 1.5 # (float) dfl loss gain
+pose: 12.0 # (float) pose loss gain
+kobj: 1.0 # (float) keypoint obj loss gain
+state: 2.0 #1.0 (float) state prediction loss gain
+
+fitness_det_weight: 0.7 # (float) 复合 fitness 中检测 mAP50-95 的权重; 驱动 best.pt 选择与早停的检测分量
+fitness_pose_weight: 0.3 # (float) 复合 fitness 中姿势 state_macro_accuracy 的权重; 0=退化为纯检测 mAP50-95(原行为); 驱动 best.pt 选择与早停的姿势分量
+
+state_grad_scale: 1.0 # (float) 姿势分支→neck/backbone 共享特征的梯度缩放alpha; 0=硬切断(检测无损, 姿势上限受限), 1=全共享(现状), (0,1)=折中; 由 v13JDELoss 注入 JDE head 的 cv4 输入(GradScale)
+state_grad_mode: gradvac # (str) 姿态梯度回传模式: scale=现有标量缩放(state_grad_scale, 现状) | gradvac=特征级软投影,保证cos(g_det,g_pose)≥eps,一次backward(eps=0即非对称PCGrad硬投影) | align=只保留与检测同向的分量(消融); 由 v13JDELoss 注入 JDE head
+state_grad_eps: 0.1 # (float) gradvac模式的余弦下界eps（ε）; eps=0=硬投影(检测法平面投影)PCGrad; >0更严格(连轻微同向也拉到eps); <0更宽松(允许一定反向); 仅gradvac模式生效
+
+pose_mode: gate_roi_cv4_1 #由 v13JDELoss 注入 JDE head； (str) PFEM姿态特征增强模式: none=baseline无增强(原SAR-YOLO) | gate=①整层人员感知门控F'=F+α(A⊙F)(A=σ(cls)人员响应) | 
+                    #gate_roi_2cv4=①整层人员感知门控+③ROI局部高分辨率增强(叠加, 共享cv4) | gate_roi_2cv4-13 =①整层人员感知门控+③ROI局部高分辨率增强(叠加, 共享cv4_1和cv4_3)
+                    #gate_roi_2cv4_indep=①整层人员感知门控+③ROI局部高分辨率增强(独立cv4_roi) | gate_roi_2cv4-13_indep =①整层人员感知门控+③ROI局部高分辨率增强(独立cv4_roi_1和cv4_roi_3)
+                    #gate_roi_cv4_1=①门控 + ③ROI局部高分辨率增强(cv4前端版): 增量作用在F_pose_i(cv4_1前, det_ch空间)  
+                    #gate_roi_cv4_2=①门控 + ③ROI局部高分辨率增强(cv4_2前端版): 增量作用在f1(cv4_2前, c4特征空间)
+                    #gate_roi_cv4_3=①门控 + ③ROI局部高分辨率增强(cv4_3前端版): 增量作用在f2(cv4_3前, c4特征空间)
+pfem_max_rois: 20 # (int) PFEM gate_roi模式ROI数量上限(按cls置信度top-N选人区域anchor), 密集人群算力可控; 由 v13JDELoss 注入 JDE head
+#pfem_tau: 0.3 # (float) PFEM gate_roi模式人区域cls阈值(预留, 当前实现用top-N); 由 v13JDELoss 注入
+
+state_focal_gamma: 2.0 # 运动状态预测时焦点损失的gamma参数设置(float) focal loss gamma parameter for state prediction (default: 2.0)
+use_state_cb: True # 运动状态预测时使用Class-Balanced权重(bool)，Flase时是采用焦点损失，没有Class-Balanced权重 whether to use Class-Balanced weighting for state prediction (default: True)
+state_cb_beta: 0.9999 # 静态全局统计CB公式的形状参数(float) w_c=(1-β)/(1-β^n_c); β越接近1对少数类补偿越激进(default: 0.9999, range: 0.9-0.9999)
+state_counts_dynamic: False # (bool) 状态类别计数来源(与use_state_cb/cosface_m_adaptive解耦): False=静态(训练前扫描数据集一次性注入, 现状); True=动态(每batch按EMA跟踪counts, 旧版风格, 适合在线sampler过采样). 动态模式下 state_cb_beta 同时作EMA衰减率与CB形状参数(建议调小到0.999/0.99以加快跟踪)
+cosface_s: 64.0 # 方案1 CosFace缩放因子(float), 控制logit量级让softmax有足够梯度(default: 64.0)
+cosface_m: 0.35 # 方案1 CosFace margin(float), 正确类余弦减m以拉开6类姿势(default: 0.35, 越大类间越分开)
+cosface_m_per_class: [0.35, 0.53, 0.40, 0.44, 0.60, 0.47] # 手动模式fallback: 每类margin按ID顺序[stands,seated,laying_down,walking,running,not_defined]; 仅 cosface_m_adaptive=False 时生效; null退回统一cosface_m
+cosface_m_adaptive: True # (bool) 启用自适应margin: 训练前按全局各类样本数自动计算(样本少→margin大, LDAM), 由trainer扫描数据集注入; True时忽略 cosface_m_per_class
+cosface_m_max: 0.60 # (float) 自适应margin上限(样本最少的类), 多数类base用 cosface_m 的值(default: 0.60)
+cosface_m_power: 1.0 # (float) 自适应曲线幂次: =1线性, <1凸(少数类margin上升快), >1凹(default: 1.0)
+  # ┌──────────────────────┬───────────────────────────────────────┬──────────────────────────────────────────────────────┐
+  # │         参数         │         adaptive=True（当前）         │                    adaptive=False                    │
+  # ├──────────────────────┼───────────────────────────────────────┼──────────────────────────────────────────────────────┤
+  # │ cosface_s: 64.0      │ ✅ 始终生效（line 679 缩放）          │ ✅ 始终生效                                          │
+  # ├──────────────────────┼───────────────────────────────────────┼──────────────────────────────────────────────────────┤
+  # │ cosface_m: 0.35      │ ✅ 生效（作多数类 base，line 542）    │ ✅ 生效（per_class=null 时所有类统一用它，line 514） │
+  # ├──────────────────────┼───────────────────────────────────────┼──────────────────────────────────────────────────────┤
+  # │ cosface_m_max: 0.60  │ ✅ 生效（少数类上限，line 542）       │ ❌ 被读进属性但从不参与计算                          │
+  # ├──────────────────────┼───────────────────────────────────────┼──────────────────────────────────────────────────────┤
+  # │ cosface_m_power: 1.0 │ ✅ 生效（曲线幂次，line 542）         │ ❌ 同上，不参与计算                                  │
+  # ├──────────────────────┼───────────────────────────────────────┼──────────────────────────────────────────────────────┤
+  # │ cosface_m_per_class  │ ❌ 整个数组被忽略（走 adaptive 分支） │ ✅ 生效（line 510-512）                              │
+  # └──────────────────────┴───────────────────────────────────────┴──────────────────────────────────────────────────────┘
+
+
+
+nbs: 64 # (int) nominal batch size
+hsv_h: 0.015 # (float) image HSV-Hue augmentation (fraction)
+hsv_s: 0.7 # (float) image HSV-Saturation augmentation (fraction)
+hsv_v: 0.4 # (float) image HSV-Value augmentation (fraction)
+degrees: 0.0 # (float) image rotation (+/- deg)
+translate: 0.1 # (float) image translation (+/- fraction)
+scale: 0.5 # (float) image scale (+/- gain)
+shear: 0.0 # (float) image shear (+/- deg)
+perspective: 0.0 # (float) image perspective (+/- fraction), range 0-0.001
+flipud: 0.0 # (float) image flip up-down (probability)
+fliplr: 0.5 # (float) image flip left-right (probability)
+bgr: 0.0 # (float) image channel BGR (probability)
+
+mosaic: 1.0 # (float) image mosaic (probability)
+mixup: 0.0 # (float) image mixup (probability)
+copy_paste: 0.1 # (float) segment copy-paste (probability)
+
+copy_paste_mode: "flip" # (str) the method to do copy_paste augmentation (flip, mixup)
+auto_augment: randaugment # (str) auto augmentation policy for classification (randaugment, autoaugment, augmix)
+erasing: 0.4 # (float) probability of random erasing during classification training (0-0.9), 0 means no erasing, must be less than 1.0.
+crop_fraction: 1.0 # (float) image crop fraction for classification (0.1-1), 1.0 means no crop, must be greater than 0.
+
+# Custom config.yaml ---------------------------------------------------------------------------------------------------
+cfg: # (str, optional) for overriding defaults.yaml
+
+# Tracker settings ------------------------------------------------------------------------------------------------------
+tracker: botsort.yaml # (str) tracker type, choices=[botsort.yaml, bytetrack.yaml]
